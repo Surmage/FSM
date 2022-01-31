@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class Buy : State
 {
-    // Start is called before the first frame update
-    void Start()
+
+    public override void Execute(string name)
+    {       
+        actor = GameObject.Find(name);
+        actor.GetComponent<Actor>().changeEnergy(-0.3f * speed);
+        actor.GetComponent<Actor>().changeMoney(-1 * speed);
+    }
+    public override void Enter(string name)
     {
-        
+        setStartValues("Eat");
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Exit(string name)
     {
-        
     }
 }

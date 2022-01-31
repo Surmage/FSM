@@ -4,15 +4,20 @@ using UnityEngine;
 
 public class Social : State
 {
-    // Start is called before the first frame update
-    void Start()
+    public override void Execute(string name)
     {
-        
+        actor = GameObject.Find(name);
+        actor.GetComponent<Actor>().changeEnergy(-0.3f * speed);
+        actor.GetComponent<Actor>().changeHunger(-1 * speed);
+        actor.GetComponent<Actor>().changeThirst(-1 * speed);       
+        actor.GetComponent<Actor>().changeMoney(-2 * speed);
+    }
+    public override void Enter(string name)
+    {
+        setStartValues("Social");
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Exit(string name)
     {
-        
     }
 }

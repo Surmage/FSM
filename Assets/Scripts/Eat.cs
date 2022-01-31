@@ -4,18 +4,22 @@ using UnityEngine;
 
 public class Eat : State
 {  
-    // Start is called before the first frame update
-    void Start()
+
+    public override void Execute(string name)
+    {
+        actor = GameObject.Find(name);
+        var act = actor.GetComponent<Actor>();
+        act.changeEnergy(-0.3f * speed);
+        act.changeHunger(1 * speed);
+        act.changeThirst(1 * speed);     
+        act.changeMoney(-1 * speed);
+    }
+    public override void Enter(string name)
     {
         setStartValues("Eat");
-        //changeText("Eating");
     }
 
-    // Update is called once per frame
-    void Update()
+    public override void Exit(string name)
     {
-        changeText("Eating");
-        actor.GetComponent<Actor>().changeHunger(1);
-        actor.GetComponent<Actor>().changeThirst(1);
     }
 }

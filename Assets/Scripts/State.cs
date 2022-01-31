@@ -2,22 +2,26 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class State : MonoBehaviour
+public abstract class State : MonoBehaviour
 {
-    public int hunger;
-    public int thirst;
     public string type;
+    public float speed;
     public GameObject actor;
+    public GameObject manager;
+    public StateManager sm;
+    public Actor ac;
+    public string next;
 
     // Start is called before the first frame update
+    public abstract void Enter(string name);
 
-    public void Execute()
-    {
-        
-    }
+    public abstract void Execute(string name);
+
+    public abstract void Exit(string name);
+
     public void problem()
     {
-
+        Debug.Log("Found");
     }
     public void changeText(string output)
     {
@@ -25,13 +29,14 @@ public class State : MonoBehaviour
     }
     public void setStartValues(string type)
     {
-        hunger = 3000;
-        thirst = 500;
-        actor = GameObject.Find("Character");
+        manager = GameObject.Find("StateManager");
+        sm = manager.GetComponent<StateManager>();        
+        speed = sm.speed;
         this.type = type;
+        next = "";
     }
-    public void setCurrentValues()
+    public void setNextState(string next)
     {
-
+        this.next = next;
     }
 }
