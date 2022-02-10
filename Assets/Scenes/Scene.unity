@@ -152,13 +152,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad3d369e178aef34cbbd731aa636a26d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hunger: 0
+  fullness: 0
   thirst: 0
   energy: 0
   money: 0
   happiness: 0
   type: 
-  transitioning: 0
+  status: 
+  busy: 0
   messager: {fileID: 0}
 --- !u!4 &173421410
 Transform:
@@ -508,13 +509,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad3d369e178aef34cbbd731aa636a26d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hunger: 0
+  fullness: 0
   thirst: 0
   energy: 0
   money: 0
   happiness: 0
   type: 
-  transitioning: 0
+  status: 
+  busy: 0
   messager: {fileID: 0}
 --- !u!4 &519096946
 Transform:
@@ -649,8 +651,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 89.225}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -366.10004, y: 35.899994}
-  m_SizeDelta: {x: -529.6, y: -356.16}
+  m_AnchoredPosition: {x: -375.2, y: 36.4}
+  m_SizeDelta: {x: -529.6, y: -391.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &665212177
 MonoBehaviour:
@@ -827,8 +829,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 89.225}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 296.43, y: 43.39}
-  m_SizeDelta: {x: -529.6, y: -357.72}
+  m_AnchoredPosition: {x: 301.7, y: 44.5}
+  m_SizeDelta: {x: -529.6, y: -393.41}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &820451380
 MonoBehaviour:
@@ -923,13 +925,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad3d369e178aef34cbbd731aa636a26d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hunger: 0
+  fullness: 0
   thirst: 0
   energy: 0
   money: 0
   happiness: 0
   type: 
-  transitioning: 0
+  status: 
+  busy: 0
   messager: {fileID: 0}
 --- !u!4 &847744323
 Transform:
@@ -1131,8 +1134,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 89.225}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -311.60004, y: 35}
-  m_SizeDelta: {x: -529.6, y: -356.16}
+  m_AnchoredPosition: {x: -328.67, y: 35.23}
+  m_SizeDelta: {x: -529.6, y: -390.31}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1041781373
 MonoBehaviour:
@@ -1309,8 +1312,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 89.225}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 352.97, y: 42.679993}
-  m_SizeDelta: {x: -529.6, y: -358.41}
+  m_AnchoredPosition: {x: 358.89984, y: 42.460007}
+  m_SizeDelta: {x: -529.6, y: -391.21}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1447632842
 MonoBehaviour:
@@ -1621,13 +1624,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad3d369e178aef34cbbd731aa636a26d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  hunger: 0
+  fullness: 0
   thirst: 0
   energy: 0
   money: 0
   happiness: 0
   type: 
-  transitioning: 0
+  status: 
+  busy: 0
   messager: {fileID: 0}
 --- !u!4 &1573383241
 Transform:

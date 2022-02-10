@@ -263,6 +263,51 @@ public class Actor : MonoBehaviour
         }
         
     }
+    public void changeHappiness(float change)
+    {
+        happiness += change;
+        if (!busy)
+        {
+            //if too low
+            if (happiness <= 500)
+            {
+                status = isAnythingLow();
+
+                if (status == "Fine")
+                {
+                    status = "Social";
+                }
+                //busy = true;
+                //s = messager.GetComponent<StateManager>().changeState(status, s, name);
+                //s.Enter(name);
+                //s.setNextState(status);
+                //StartCoroutine(wait(1));
+
+
+                return;
+            }
+            //Change         
+
+
+            //if too high
+            if (amIFine())
+            {
+                status = isAnythingLow();
+
+                if (status == "Fine")
+                {
+                    status = "Social";
+                }
+                //s = messager.GetComponent<StateManager>().changeState(status, s, name);
+                //s.Enter(name);
+                //s.setNextState(status);
+                //StartCoroutine(wait(1));
+
+
+            }
+
+        }
+    }
     public void setState(State s)
     {
         this.s = s;
@@ -305,17 +350,23 @@ public class Actor : MonoBehaviour
             {              
                 return true;
             }
-        }     
+        }
+        if (s.type == "Idle")
+        {
+            if (money >= 2500 && happiness >= 2500)
+            {
+                return true;
+            }
+        }
         return false;
     }
     public string isAnythingLow()
     {
         List<(float, string)> arrs = new List<(float, string)>() 
-        {(thirst, "Thirsty"), (energy, "Sleepy"), (fullness, "Hungry"), (money, "Poor") };
+        {(thirst, "Thirsty"), (energy, "Sleepy"), (fullness, "Hungry"), (money, "Poor"), (happiness, "Bored") };
         arrs.Sort();
-        Debug.Log(arrs[0].Item2);
         //arrs.Sort();
-        for(int i=0; i<4; i++)
+        for(int i=0; i<5; i++)
         {
             if(arrs[i].Item1 <= 1000)
             {
