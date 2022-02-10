@@ -4,24 +4,26 @@ using UnityEngine;
 
 public class Actor : MonoBehaviour
 {
-    public float hunger;
+    public float fullness;
     public float thirst;
     public float energy;
     public float money;
     public float happiness;
     public string type;
-    public bool transitioning;
+    public string status;
+    public bool busy;
     State s;    
     public GameObject messager;
     GameObject state;
     // Start is called before the first frame update
     void Start()
     {
-        transitioning = false;
+        busy = false;
+        status = "";
         float startValue1= Random.Range(4000, 8000);
         float startValue2 = Random.Range(4000, 8000);
         float startValue3 = Random.Range(4000, 8000);
-        hunger = startValue1;
+        fullness = startValue1;
         thirst = startValue1;
         energy = startValue2;
         money = startValue3;
@@ -35,16 +37,18 @@ public class Actor : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {       
+
+
         s.Execute(name);
         type = s.type;
-        if (hunger < 0)
+        if (fullness < 0)
         {
-            hunger = 0;
+            fullness = 0;
         }
-        if (hunger > 8000)
+        if (fullness > 8000)
         {
-            hunger = 8000;
+            fullness = 8000;
         }
         if (thirst < 0)
         {
@@ -70,33 +74,56 @@ public class Actor : MonoBehaviour
         {
             happiness = 8000;
         }
-        if (hunger <= 0 && thirst <= 0)
+        if (fullness <= 0 && thirst <= 0)
         {
-            s = messager.GetComponent<StateManager>().createTransition("Dead", s);
+            s = messager.GetComponent<StateManager>().changeState(status, s, name);
             s.Enter(name);
             s.setNextState("Dead");
         }
     }
     public void changeHunger(float change)
     {      
-        if (hunger >= 0 && hunger <= 8000)
+        if (fullness >= 0 && fullness <= 8000)
         {
-            hunger += change;
-            if (!transitioning)
+            fullness += change;
+            if (!busy)
             {
-                if (hunger <= 500)
+                if (fullness <= 100)
                 {
+                    status = isAnythingLow();
+
+                    //Check if it is okay to switch to eating
                     //Change
-                    s = messager.GetComponent<StateManager>().createTransition("Hungry", s);
+
+                    if (status == "Fine")
+                    {
+                        status = "Social";
+                    }
+                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
                     s.Enter(name);
-                    s.setNextState("Hungry");
+                    s.setNextState(status);
+                    //StartCoroutine(wait(1));
+                    
                     return;
                 }
                 if (amIFine())
                 {
-                    s = messager.GetComponent<StateManager>().createTransition("Poor", s);
+                    status = isAnythingLow();
+
+                    //Check if it is okay to stop eating
+
+                    if (status == "Fine")
+                    {
+                        status = "Social";
+                    }
+                    //busy = true;
+
+                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
                     s.Enter(name);
-                    s.setNextState("Poor");
+                    s.setNextState(status);
+                    //StartCoroutine(wait(1));
+
+                    
                 }
             }         
         }
@@ -106,21 +133,42 @@ public class Actor : MonoBehaviour
         if (thirst >= 0 && thirst <= 8000)
         {
             thirst += change;
-            if (!transitioning)
+            if (!busy)
             {
                 if (thirst <= 1000)
                 {
-                    //Change
-                    s = messager.GetComponent<StateManager>().createTransition("Thirsty", s);
+                    status = isAnythingLow();
+
+                    if (status == "Fine")
+                    {
+                        status = "Social";
+                    }
+                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
                     s.Enter(name);
-                    s.setNextState("Thirsty");
+                    s.setNextState(status);
+                    //StartCoroutine(wait(1));
+
+   
+                    //Change                    
                     return;
                 }
                 if (amIFine())
                 {
-                    s = messager.GetComponent<StateManager>().createTransition("Poor", s);
+                    status = isAnythingLow();
+
+                    if (status == "Fine")
+                    {
+                        status = "Social";
+                    }
+                    //busy = true;
+
+                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
                     s.Enter(name);
-                    s.setNextState("Poor");
+                    s.setNextState(status);
+                    //StartCoroutine(wait(1));
+
+
+                    
                 }
             }
         }      
@@ -130,23 +178,41 @@ public class Actor : MonoBehaviour
         if (energy >= 0 && energy <= 8000)
         {
             energy += change;
-            if (!transitioning)
+            if (!busy)
             {        
-                //gets called every frame, stuck in transition because of energy being low
                 if (energy <= 500)
-                {                    
-                    //Change
-                    s = messager.GetComponent<StateManager>().createTransition("Sleepy", s);
+                {
+                    status = isAnythingLow();
+
+                    if (status == "Fine")
+                    {
+                        status = "Social";
+                    }
+                    //busy = true;
+
+                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
                     s.Enter(name);
-                    s.setNextState("Sleepy");
+                    s.setNextState(status);
+                    //StartCoroutine(wait(1));
+
                     
+
                     return;
                 }
                 if (amIFine())
                 {
-                    s = messager.GetComponent<StateManager>().createTransition("Poor", s);
+                    status = isAnythingLow();
+
+                    if (status == "Fine")
+                    {
+                        status = "Social";
+                    }
+                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
                     s.Enter(name);
-                    s.setNextState("Poor");
+                    s.setNextState(status);
+                    //StartCoroutine(wait(1));
+
+                    
                 }
             }
         }
@@ -154,23 +220,44 @@ public class Actor : MonoBehaviour
     public void changeMoney(float change)
     {        
         money += change;
-        if (!transitioning)
+        if (!busy)
         {
             //if too low
             if (money <= 500)
             {
-                //Change
-                s = messager.GetComponent<StateManager>().createTransition("Poor", s);
+                status = isAnythingLow();
+
+                if (status == "Fine")
+                {
+                    status = "Social";
+                }
+                //busy = true;
+                s = messager.GetComponent<StateManager>().changeState(status, s, name);
                 s.Enter(name);
-                s.setNextState("Poor");
+                s.setNextState(status);
+                //StartCoroutine(wait(1));
+
+                
                 return;
             }
+            //Change         
+           
+            
             //if too high
             if (amIFine())
             {
-                s = messager.GetComponent<StateManager>().createTransition("Social", s);
+                status = isAnythingLow();
+
+                if (status == "Fine")
+                {
+                    status = "Social";
+                }
+                s = messager.GetComponent<StateManager>().changeState(status, s, name);
                 s.Enter(name);
-                s.setNextState("Social");
+                s.setNextState(status);
+                //StartCoroutine(wait(1));
+
+                
             }
             
         }
@@ -180,38 +267,39 @@ public class Actor : MonoBehaviour
     {
         this.s = s;
     }
+    
     bool amIFine()
     {
         //string type = messager.GetComponent<StateManager>().type;
-        if(type == "Drink")
+        if(s.type == "Drink")
         {
-            if(thirst >= 6000)
+            if(thirst >= 7000)
             {
                 return true;
             }
         }
-        if(type == "Eat")
+        if(s.type == "Eat")
         {
-            if (hunger >= 7000)
+            if (fullness >= 7000)
             {
                 return true;
             }
         }
-        if(type == "Sleep")
+        if(s.type == "Sleep")
         {
             if(energy >= 7500)
             {
                 return true;
             }
         }
-        if (type == "Gather")
+        if (s.type == "Work")
         {
             if (money >= 5000)
-            {
+            {           
                 return true;
             }
         }
-        if (type == "Social")
+        if (s.type == "Social")
         {
             if (money >= 2500)
             {              
@@ -219,5 +307,31 @@ public class Actor : MonoBehaviour
             }
         }     
         return false;
+    }
+    public string isAnythingLow()
+    {
+        List<(float, string)> arrs = new List<(float, string)>() 
+        {(thirst, "Thirsty"), (energy, "Sleepy"), (fullness, "Hungry"), (money, "Poor") };
+        arrs.Sort();
+        Debug.Log(arrs[0].Item2);
+        //arrs.Sort();
+        for(int i=0; i<4; i++)
+        {
+            if(arrs[i].Item1 <= 1000)
+            {
+                return arrs[i].Item2;
+            }
+        }
+        
+        return "Fine";
+        
+        //listed in order of importance
+    }
+    private IEnumerator wait(float waitTime)
+    {
+        WaitForSeconds wait = new WaitForSeconds(waitTime);
+        yield return wait;
+        Debug.Log("Works");
+        busy = false;
     }
 }

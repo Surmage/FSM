@@ -8,16 +8,16 @@ public class Social : State
     {
         actor = GameObject.Find(name);
         actor.GetComponent<Actor>().changeEnergy(-0.3f * speed);
-        actor.GetComponent<Actor>().changeHunger(-1 * speed);
-        actor.GetComponent<Actor>().changeThirst(-1 * speed);       
-        actor.GetComponent<Actor>().changeMoney(-2 * speed);
+        actor.GetComponent<Actor>().changeMoney(-1 * speed);
+
     }
     public override void Enter(string name)
     {
-        setStartValues("Social");
+        setStartValues("Social");    
     }
 
     public override void Exit(string name)
     {
+        //actor.GetComponent<Actor>().changeMoney(socialIntensity * -1000);
     }
 }

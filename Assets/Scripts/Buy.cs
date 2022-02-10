@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class Buy : State
 {
-
     public override void Execute(string name)
     {       
         actor = GameObject.Find(name);
@@ -14,6 +13,7 @@ public class Buy : State
     public override void Enter(string name)
     {
         setStartValues("Eat");
+
     }
 
     public override void Exit(string name)

@@ -33,13 +33,13 @@ public class StateManager : MonoBehaviour
         energyBar.GetComponent<Health>().setValue(8000);
         happyBar.GetComponent<Health>().setValue(8000);
         time = 0;
-        speed = 1f;
+        speed = 4f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        float hunger = actor.GetComponent<Actor>().hunger;
+        float hunger = actor.GetComponent<Actor>().fullness;
         float thirst = actor.GetComponent<Actor>().thirst;   
         float energy = actor.GetComponent<Actor>().energy;
         float happiness = actor.GetComponent<Actor>().happiness;
@@ -55,16 +55,18 @@ public class StateManager : MonoBehaviour
 
         
     }
-    public State createTransition(string cause, State s)
+    //public State createTransition(string cause, State s)
+    //{
+    //    s.Exit(cause);
+    //    s = states[5].GetComponent<Transition>();                   
+    //    return s;
+    //}
+    public State changeState(string cause, State s, string name)
     {
-        s.Exit(cause);
-        s = states[5].GetComponent<Transition>();                   
-        return s;
-    }
-    public State changeState(string cause, State s)
-    {
+        s.Exit(name);
         if (cause == "Hungry")
         {
+            Debug.Log("HEre");
             s = states[0].GetComponent<Eat>();
         }
         if (cause == "Sleepy")
