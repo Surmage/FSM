@@ -17,7 +17,8 @@ public class Dead : State
         setStartValues("Work");
     }
 
-    public override void Exit(string name)
+    public override string Exit(string name)
     {
+        return "";
     }
 }

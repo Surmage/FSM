@@ -8,7 +8,7 @@ public abstract class State : MonoBehaviour
     public float speed;
     public GameObject actor;
     public GameObject manager;
-    public StateManager sm;
+    public InterfaceManager im;
     public Actor ac;
     public string next;
 
@@ -17,7 +17,7 @@ public abstract class State : MonoBehaviour
 
     public abstract void Execute(string name);
 
-    public abstract void Exit(string name);
+    public abstract string Exit(string name);
 
     public void problem()
     {
@@ -29,9 +29,10 @@ public abstract class State : MonoBehaviour
     }
     public void setStartValues(string type)
     {
-        manager = GameObject.Find("StateManager");
-        sm = manager.GetComponent<StateManager>();        
-        speed = sm.speed;
+
+        manager = GameObject.Find("InterfaceManager");
+        im = manager.GetComponent<InterfaceManager>();        
+        speed = im.speed;
         this.type = type;
         next = "";
     }

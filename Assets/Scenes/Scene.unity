@@ -160,6 +160,8 @@ MonoBehaviour:
   type: 
   status: 
   busy: 0
+  canSocial: 0
+  s: {fileID: 0}
   messager: {fileID: 0}
 --- !u!4 &173421410
 Transform:
@@ -186,7 +188,7 @@ GameObject:
   - component: {fileID: 338515109}
   - component: {fileID: 338515110}
   m_Layer: 0
-  m_Name: StateManager
+  m_Name: InterfaceManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -222,19 +224,8 @@ MonoBehaviour:
   cashText: {fileID: 1762300373}
   timeText: {fileID: 409645633}
   statesText: {fileID: 1910674242}
+  day: 0
   speed: 0
-  states:
-  - {fileID: 1690560428429915997, guid: 9d6c3da987b2c05449e48ec596fb2bab, type: 3}
-  - {fileID: 138193429404819060, guid: 9b327ceec1135d84d842fc20a33bcbad, type: 3}
-  - {fileID: 1458431500200877611, guid: 1a9f6a4776a05db4398f65c03a709a58, type: 3}
-  - {fileID: 1853025574574317216, guid: 179efb158f64fa943ac30ebb2d6d2a9f, type: 3}
-  - {fileID: 3463327415505544725, guid: 2f54c81c7c08982469a4e9d19c72584f, type: 3}
-  - {fileID: 1385662396387017880, guid: 4890318db2e381443978f63aca0f2235, type: 3}
-  - {fileID: 6615059195390243758, guid: 822ebd12adfcc6f428c54f8551bb6d2f, type: 3}
-  friends:
-  - {fileID: 847744321}
-  - {fileID: 173421408}
-  - {fileID: 1573383239}
 --- !u!1 &361544589
 GameObject:
   m_ObjectHideFlags: 0
@@ -517,6 +508,8 @@ MonoBehaviour:
   type: 
   status: 
   busy: 0
+  canSocial: 0
+  s: {fileID: 0}
   messager: {fileID: 0}
 --- !u!4 &519096946
 Transform:
@@ -651,7 +644,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 89.225}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -375.2, y: 36.4}
+  m_AnchoredPosition: {x: -375.19998, y: 36.399994}
   m_SizeDelta: {x: -529.6, y: -391.02}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &665212177
@@ -933,6 +926,8 @@ MonoBehaviour:
   type: 
   status: 
   busy: 0
+  canSocial: 0
+  s: {fileID: 0}
   messager: {fileID: 0}
 --- !u!4 &847744323
 Transform:
@@ -1134,7 +1129,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 89.225}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -328.67, y: 35.23}
+  m_AnchoredPosition: {x: -328.67007, y: 35.229996}
   m_SizeDelta: {x: -529.6, y: -390.31}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1041781373
@@ -1632,6 +1627,8 @@ MonoBehaviour:
   type: 
   status: 
   busy: 0
+  canSocial: 0
+  s: {fileID: 0}
   messager: {fileID: 0}
 --- !u!4 &1573383241
 Transform:
@@ -1646,6 +1643,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1685453563
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1685453565}
+  - component: {fileID: 1685453564}
+  m_Layer: 0
+  m_Name: MessageDispatcher
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1685453564
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1685453563}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f3262b8b66a0117469209749f19ab29b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  states:
+  - {fileID: 1690560428429915997, guid: 9d6c3da987b2c05449e48ec596fb2bab, type: 3}
+  - {fileID: 138193429404819060, guid: 9b327ceec1135d84d842fc20a33bcbad, type: 3}
+  - {fileID: 1458431500200877611, guid: 1a9f6a4776a05db4398f65c03a709a58, type: 3}
+  - {fileID: 1853025574574317216, guid: 179efb158f64fa943ac30ebb2d6d2a9f, type: 3}
+  - {fileID: 3463327415505544725, guid: 2f54c81c7c08982469a4e9d19c72584f, type: 3}
+  - {fileID: 2087834681532203130, guid: 7cb1f766ceb68874fb0b35b662c5cf8d, type: 3}
+  - {fileID: 4653905038346019413, guid: edbd4a5736c3a9941bb8569db5ce67e7, type: 3}
+  - {fileID: 6615059195390243758, guid: 822ebd12adfcc6f428c54f8551bb6d2f, type: 3}
+  friends:
+  - {fileID: 847744321}
+  - {fileID: 173421408}
+  - {fileID: 1573383239}
+  - {fileID: 519096944}
+--- !u!4 &1685453565
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1685453563}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.19970533, y: -0.15679881, z: 60.070747}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1762300372
 GameObject:

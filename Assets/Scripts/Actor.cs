@@ -12,12 +12,15 @@ public class Actor : MonoBehaviour
     public string type;
     public string status;
     public bool busy;
-    State s;    
-    public GameObject messager;
+    public bool canSocial;
+    public State s;    
+    GameObject messageDispatcher;
+    Telegram telegram;
     GameObject state;
     // Start is called before the first frame update
     void Start()
     {
+        canSocial = true;
         busy = false;
         status = "";
         float startValue1= Random.Range(4000, 8000);
@@ -28,20 +31,22 @@ public class Actor : MonoBehaviour
         energy = startValue2;
         money = startValue3;
         happiness = startValue3;
-        messager = GameObject.Find("StateManager");
-        int i = Random.Range(0, 5);
-        s = messager.GetComponent<StateManager>().changeState(i, s); ;
+        messageDispatcher = GameObject.Find("MessageDispatcher");
+        int i = Random.Range(0, 4);
+        telegram = messageDispatcher.GetComponent<Telegram>();
+        s = telegram.changeState(i);
         s.Enter(name);
-        //Debug.Log(name);
+        //type = s.type;
+
     }
 
     // Update is called once per frame
     void Update()
-    {       
-
+    {
 
         s.Execute(name);
         type = s.type;
+
         if (fullness < 0)
         {
             fullness = 0;
@@ -76,9 +81,9 @@ public class Actor : MonoBehaviour
         }
         if (fullness <= 0 && thirst <= 0)
         {
-            s = messager.GetComponent<StateManager>().changeState(status, s, name);
+            status = "Dead";
+            s = telegram.changeState(status, s, this);
             s.Enter(name);
-            s.setNextState("Dead");
         }
     }
     public void changeHunger(float change)
@@ -88,42 +93,26 @@ public class Actor : MonoBehaviour
             fullness += change;
             if (!busy)
             {
-                if (fullness <= 100)
+                if (fullness <= 1000 && change < 0)
                 {
                     status = isAnythingLow();
 
                     //Check if it is okay to switch to eating
                     //Change
 
-                    if (status == "Fine")
-                    {
-                        status = "Social";
-                    }
-                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                    s.Enter(name);
-                    s.setNextState(status);
-                    //StartCoroutine(wait(1));
-                    
+                    enterState();
                     return;
                 }
-                if (amIFine())
+                if (amIFine() && change > 0)
                 {
                     status = isAnythingLow();
 
                     //Check if it is okay to stop eating
 
-                    if (status == "Fine")
-                    {
-                        status = "Social";
-                    }
                     //busy = true;
 
-                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                    s.Enter(name);
-                    s.setNextState(status);
-                    //StartCoroutine(wait(1));
+                    enterState();
 
-                    
                 }
             }         
         }
@@ -135,40 +124,23 @@ public class Actor : MonoBehaviour
             thirst += change;
             if (!busy)
             {
-                if (thirst <= 1000)
+                if (thirst <= 1000 && change < 0)
                 {
                     status = isAnythingLow();
 
-                    if (status == "Fine")
-                    {
-                        status = "Social";
-                    }
-                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                    s.Enter(name);
-                    s.setNextState(status);
-                    //StartCoroutine(wait(1));
-
-   
+                    enterState();
                     //Change                    
                     return;
                 }
-                if (amIFine())
+                if (amIFine() && change > 0)
                 {
                     status = isAnythingLow();
 
-                    if (status == "Fine")
-                    {
-                        status = "Social";
-                    }
                     //busy = true;
 
-                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                    s.Enter(name);
-                    s.setNextState(status);
-                    //StartCoroutine(wait(1));
+                    enterState();
 
 
-                    
                 }
             }
         }      
@@ -177,42 +149,25 @@ public class Actor : MonoBehaviour
     {       
         if (energy >= 0 && energy <= 8000)
         {
-            energy += change;
+            energy += change;          
             if (!busy)
-            {        
-                if (energy <= 500)
+            {              
+                if (energy <= 1000 && change < 0)
                 {
                     status = isAnythingLow();
 
-                    if (status == "Fine")
-                    {
-                        status = "Social";
-                    }
                     //busy = true;
 
-                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                    s.Enter(name);
-                    s.setNextState(status);
-                    //StartCoroutine(wait(1));
+                    enterState();
 
-                    
 
                     return;
                 }
-                if (amIFine())
+                if (amIFine() && change > 0)
                 {
                     status = isAnythingLow();
+                    enterState();
 
-                    if (status == "Fine")
-                    {
-                        status = "Social";
-                    }
-                    s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                    s.Enter(name);
-                    s.setNextState(status);
-                    //StartCoroutine(wait(1));
-
-                    
                 }
             }
         }
@@ -222,44 +177,30 @@ public class Actor : MonoBehaviour
         money += change;
         if (!busy)
         {
-            //if too low
-            if (money <= 500)
+            if(status != "Social")
             {
-                status = isAnythingLow();
-
-                if (status == "Fine")
+                //if too low
+                if (money <= 1000 && change < 0)
                 {
-                    status = "Social";
-                }
-                //busy = true;
-                s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                s.Enter(name);
-                s.setNextState(status);
-                //StartCoroutine(wait(1));
+                    status = isAnythingLow();
 
-                
-                return;
+                    //busy = true;
+                    enterState();
+
+                    return;
+                }
+                //Change                    
             }
-            //Change         
-           
-            
             //if too high
-            if (amIFine())
+            if (amIFine() && change > 0)
             {
                 status = isAnythingLow();
 
-                if (status == "Fine")
-                {
-                    status = "Social";
-                }
-                s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                s.Enter(name);
-                s.setNextState(status);
-                //StartCoroutine(wait(1));
+                enterState();
 
-                
             }
-            
+
+
         }
         
     }
@@ -269,20 +210,11 @@ public class Actor : MonoBehaviour
         if (!busy)
         {
             //if too low
-            if (happiness <= 500)
+            if (happiness <= 1000 && change < 0)
             {
                 status = isAnythingLow();
 
-                if (status == "Fine")
-                {
-                    status = "Social";
-                }
-                //busy = true;
-                //s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                //s.Enter(name);
-                //s.setNextState(status);
-                //StartCoroutine(wait(1));
-
+                enterState();
 
                 return;
             }
@@ -290,30 +222,32 @@ public class Actor : MonoBehaviour
 
 
             //if too high
-            if (amIFine())
+            if (amIFine() && change > 0)
             {
                 status = isAnythingLow();
 
-                if (status == "Fine")
-                {
-                    status = "Social";
-                }
-                //s = messager.GetComponent<StateManager>().changeState(status, s, name);
-                //s.Enter(name);
-                //s.setNextState(status);
-                //StartCoroutine(wait(1));
+                enterState();
 
 
             }
 
         }
     }
-    public void setState(State s)
+    private void enterState()
     {
-        this.s = s;
+        s = telegram.GetComponent<Telegram>().changeState(status, s, this);
+        s.Enter(name);
+        type = s.type;       
     }
-    
-    bool amIFine()
+    public void enterSocial()
+    {
+        s = telegram.GetComponent<Telegram>().changeState(4);
+        s.Enter(name);
+        type = s.type;
+    }
+
+
+    private bool amIFine()
     {
         //string type = messager.GetComponent<StateManager>().type;
         if(s.type == "Drink")
@@ -337,52 +271,220 @@ public class Actor : MonoBehaviour
                 return true;
             }
         }
-        if (s.type == "Work")
+        if (s.type == "Gather")
         {
             if (money >= 5000)
             {           
                 return true;
             }
         }
+        if (s.type == "Mine")
+        {
+            if (money >= 10000)
+            {
+                return true;
+            }
+        }
         if (s.type == "Social")
         {
-            if (money >= 2500)
+            if (happiness >= 7000)
             {              
                 return true;
             }
         }
-        if (s.type == "Idle")
+        //if (s.type == "Idle")
+        //{
+        //    if (money >= 2500 && happiness >= 7000)
+        //    {
+        //        return true;
+        //    }
+        //}
+        return false;
+    }
+    public bool canISocial()
+    {
+        //string type = messager.GetComponent<StateManager>().type;
+        if (s.type == "Drink")
         {
-            if (money >= 2500 && happiness >= 2500)
+            if (thirst >= 3500)
             {
                 return true;
             }
+        }
+        if (s.type == "Eat")
+        {
+            if (fullness >= 3500)
+            {
+                return true;
+            }
+        }
+        if (s.type == "Sleep")
+        {
+            if (energy >= 4000)
+            {
+                return true;
+            }
+        }
+        if (s.type == "Gather")
+        {
+            if (money >= 5000)
+            {
+                return true;
+            }
+        }
+        if (s.type == "Mine")
+        {
+            if (money >= 5000)
+            {
+                return true;
+            }
+        }      
+        if (s.type == "Idle")
+        {
+            return true;
         }
         return false;
     }
     public string isAnythingLow()
     {
-        List<(float, string)> arrs = new List<(float, string)>() 
+        List<(float, string)> arrs = new List<(float, string)>()
         {(thirst, "Thirsty"), (energy, "Sleepy"), (fullness, "Hungry"), (money, "Poor"), (happiness, "Bored") };
-        arrs.Sort();
-        //arrs.Sort();
-        for(int i=0; i<5; i++)
+        List<(float, string)> arrsCopy = arrs;
+        if (!canSocial)
         {
-            if(arrs[i].Item1 <= 1000)
-            {
-                return arrs[i].Item2;
-            }
+            arrs.RemoveAt(4);
+        }
+        arrs.Sort();
+        arrsCopy.Sort();
+
+        //arrs.Sort();
+        if (arrsCopy[0].Item1 <= 1000 && arrsCopy[1].Item1 <= 1000)
+        {
+            fix(arrsCopy);
+            return "Fine";
+        }
+        else if (arrs[0].Item1 <= 1000)
+        {
+            return arrs[0].Item2;
         }
         
-        return "Fine";
-        
+        else
+        {
+            float mood = Random.Range(0, 3);
+            if (mood != 2)
+            {
+                if(status != "Motivated")
+                {
+                    return "Fine";
+                }
+                else
+                {
+                    return status;
+                }
+                
+            }
+            else
+            {
+                if(status != "Fine")
+                {
+                    return "Motivated";
+                }
+                else
+                {
+                    return status;
+                }
+            }
+
+        }
         //listed in order of importance
     }
-    private IEnumerator wait(float waitTime)
+    private bool fix(List<(float, string)> arr)
     {
-        WaitForSeconds wait = new WaitForSeconds(waitTime);
-        yield return wait;
-        Debug.Log("Works");
-        busy = false;
+
+        Debug.Log(name + " " + arr[0].Item2 + " " + arr[1].Item2 + " " + arr[2].Item2 + " ");
+        string string1 = arr[0].Item2;
+        string string2 = arr[1].Item2;
+        string string3 = arr[2].Item2;
+
+        //Stats increase by a lot instantly?
+        if (!busy)
+        {
+            setBusy(6);
+            enterStateDelayed(0, string1);
+            enterStateDelayed(3, string2);
+            enterStateDelayed(6, string3);
+
+            //while (arr[0].Item1 <= 7000)
+            //{
+            //    s.Execute(name);
+            //    type = s.type;
+            //}
+
+            //status = string2;
+            //enterState();
+            //while (arr[1].Item1 <= 7000)
+            //{
+            //    s.Execute(name);
+            //    type = s.type;
+            //}
+
+            //status = string3;
+            //enterState();
+            //while (arr[2].Item1 <= 7000)
+            //{
+            //    s.Execute(name);
+            //    type = s.type;
+            //}
+
+        }
+        //thirst = 8000;
+        //fullness = 8000;
+        //energy = 8000;
+        //money = 8000;
+        //happiness = 8000;
+        return busy;
     }
+    public string getStatus()
+    {
+        return status;
+    }
+    public void setStatus(string status)
+    {
+        this.status = status;
+    }
+    private IEnumerator enterStateDelayed(float waitTime, string newStatus)
+    {
+        WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed());
+        yield return wait;
+        status = newStatus;
+        enterState();
+    }
+    public IEnumerator setCanSocial(float waitTime)
+    {
+        if (canSocial)
+        {
+            canSocial = false;
+            //Debug.Log(name + " " + canSocial);
+
+            WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed());
+            yield return wait;
+            canSocial = true;
+            //Debug.Log(name + " " + canSocial);
+        }
+    }
+
+    public IEnumerator setBusy(float waitTime)
+    {
+        if (!busy)
+        {
+            busy = true;
+            //Debug.Log(name + " " + canSocial);
+
+            WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed());
+            yield return wait;
+            busy = false;
+            //Debug.Log(name + " " + canSocial);
+        }
+    }
+
 }

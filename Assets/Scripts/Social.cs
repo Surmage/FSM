@@ -7,17 +7,22 @@ public class Social : State
     public override void Execute(string name)
     {
         actor = GameObject.Find(name);
-        actor.GetComponent<Actor>().changeEnergy(-0.3f * speed);
-        actor.GetComponent<Actor>().changeMoney(-1 * speed);
+        var act = actor.GetComponent<Actor>();
+        act.changeEnergy(-0.1f * speed);
+        act.changeMoney(-0.5f * speed);
+        act.changeHappiness(0.5f * speed);
+        act.changeHunger(0.5f * speed);
+        act.changeThirst(0.5f * speed);
 
     }
     public override void Enter(string name)
     {
+        //Debug.Log(name + " entering social");
         setStartValues("Social");    
     }
 
-    public override void Exit(string name)
+    public override string Exit(string name)
     {
-        //actor.GetComponent<Actor>().changeMoney(socialIntensity * -1000);
+        return next;
     }
 }

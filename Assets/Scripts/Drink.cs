@@ -7,10 +7,12 @@ public class Drink : State
 
     public override void Execute(string name)
     {
+
         actor = GameObject.Find(name);
-        actor.GetComponent<Actor>().changeEnergy(-0.3f * speed);
-        actor.GetComponent<Actor>().changeThirst(4 * speed);
-        
+        var act = actor.GetComponent<Actor>();
+        act.changeEnergy(-0.2f * speed);
+        act.changeThirst(3 * speed);
+
     }
     public override void Enter(string name)
     {
@@ -20,7 +22,9 @@ public class Drink : State
 
     }
 
-    public override void Exit(string name)
+    public override string Exit(string name)
     {
+        return next;
+
     }
 }

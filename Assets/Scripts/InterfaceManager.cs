@@ -3,25 +3,31 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class StateManager : MonoBehaviour
+public class InterfaceManager : MonoBehaviour
 {
     public TextMeshPro stateText;
     public TextMeshPro cashText;
     public TextMeshPro timeText;
     public TextMeshPro statesText;
     GameObject actor;
+    GameObject messageDispatcher;
     GameObject hungerBar;
     GameObject thirstBar;
     GameObject energyBar;
     GameObject happyBar;
     float time;
+    public float day;
     public float speed;
-    [SerializeField] public List<GameObject> states = new List<GameObject>();
-    [SerializeField] public List<GameObject> friends = new List<GameObject>();
+    List<GameObject> states = new List<GameObject>();
+    List<GameObject> friends = new List<GameObject>();
 
     // Start is called before the first frame update
     void Start()
     {
+        messageDispatcher = GameObject.Find("MessageDispatcher");
+        Telegram t = messageDispatcher.GetComponent<Telegram>();
+        states = t.states;
+        friends = t.friends;
         hungerBar = GameObject.Find("Hunger");
         thirstBar = GameObject.Find("Thirst");
         energyBar = GameObject.Find("Energy");
@@ -33,7 +39,8 @@ public class StateManager : MonoBehaviour
         energyBar.GetComponent<Health>().setValue(8000);
         happyBar.GetComponent<Health>().setValue(8000);
         time = 0;
-        speed = 4f;
+        speed = 19f;
+        day = 0;
     }
 
     // Update is called once per frame
@@ -43,7 +50,7 @@ public class StateManager : MonoBehaviour
         float thirst = actor.GetComponent<Actor>().thirst;   
         float energy = actor.GetComponent<Actor>().energy;
         float happiness = actor.GetComponent<Actor>().happiness;
-        cashText.text = "Cash: " + actor.GetComponent<Actor>().money.ToString();
+        cashText.text = "Cash: " + actor.GetComponent<Actor>().money.ToString("#");
         stateText.text = actor.GetComponent<Actor>().type;
         statesText.text = " Friend 1: " + friends[0].GetComponent<Actor>().type + "\nFriend 2: " + friends[1].GetComponent<Actor>().type + "\nFriend 3:"+ friends[2].GetComponent<Actor>().type;
         time += Time.deltaTime * 1440f * speed;
@@ -55,72 +62,6 @@ public class StateManager : MonoBehaviour
 
         
     }
-    //public State createTransition(string cause, State s)
-    //{
-    //    s.Exit(cause);
-    //    s = states[5].GetComponent<Transition>();                   
-    //    return s;
-    //}
-    public State changeState(string cause, State s, string name)
-    {
-        s.Exit(name);
-        if (cause == "Hungry")
-        {
-            Debug.Log("HEre");
-            s = states[0].GetComponent<Eat>();
-        }
-        if (cause == "Sleepy")
-        {
-            s = states[1].GetComponent<Sleep>();
-        }
-        if (cause == "Thirsty")
-        {
-            s = states[2].GetComponent<Drink>();
-        }
-        if (cause == "Poor")
-        {
-            s = states[3].GetComponent<Gather>();
-        }
-        if (cause == "Social")
-        {
-            s = states[4].GetComponent<Social>();
-        }
-        if (cause == "Dead")
-        {
-            s = states[5].GetComponent<Dead>();
-        }
-        return s;
-    }
-    public State changeState(int i, State s)
-    {
-        if (i == 0)
-        {
-            s = states[0].GetComponent<Eat>();
-        }
-        if (i == 1)
-        {
-            s = states[1].GetComponent<Sleep>();
-        }
-        if (i == 2)
-        {
-            s = states[2].GetComponent<Drink>();
-        }
-        if (i == 3)
-        {
-            s = states[3].GetComponent<Gather>();
-        }
-        if (i == 4)
-        {
-            s = states[4].GetComponent<Social>();
-        }
-        if (i == 5)
-        {
-            s = states[5].GetComponent<Dead>();
-        }
-
-        return s;
-    }
-
 
     public void clock(float time)
     {
