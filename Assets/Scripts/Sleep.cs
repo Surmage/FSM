@@ -19,9 +19,6 @@ public class Sleep : State
     public override void Enter(string name)
     {
         setStartValues("Sleep");
-      
-
-
     }
 
     public override string Exit(string name)

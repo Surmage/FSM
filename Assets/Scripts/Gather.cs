@@ -9,11 +9,11 @@ public class Gather : State
 
         actor = GameObject.Find(name);
         var act = actor.GetComponent<Actor>();
-        act.changeEnergy(-0.2f * speed);
+        act.changeEnergy(-0.25f * speed);
         act.changeHunger(-0.2f * speed);
         act.changeThirst(-0.5f * speed);
-        act.changeMoney(0.2f * speed);
-        act.changeHappiness(-0.2f * speed);
+        act.changeMoney(0.1f * speed);
+        act.changeHappiness(-0.1f * speed);
     }
     public override void Enter(string name)
     {

@@ -10,7 +10,7 @@ public class Drink : State
 
         actor = GameObject.Find(name);
         var act = actor.GetComponent<Actor>();
-        act.changeEnergy(-0.2f * speed);
+        act.changeEnergy(-0.25f * speed);
         act.changeThirst(3 * speed);
 
     }

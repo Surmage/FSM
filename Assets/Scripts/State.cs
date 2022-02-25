@@ -5,6 +5,7 @@ using UnityEngine;
 public abstract class State : MonoBehaviour
 {
     public string type;
+    public string problem;
     public float speed;
     public GameObject actor;
     public GameObject manager;
@@ -19,10 +20,6 @@ public abstract class State : MonoBehaviour
 
     public abstract string Exit(string name);
 
-    public void problem()
-    {
-        Debug.Log("Found");
-    }
     public void changeText(string output)
     {
         //Debug.Log(output);

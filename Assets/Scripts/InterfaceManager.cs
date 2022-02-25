@@ -39,7 +39,7 @@ public class InterfaceManager : MonoBehaviour
         energyBar.GetComponent<Health>().setValue(8000);
         happyBar.GetComponent<Health>().setValue(8000);
         time = 0;
-        speed = 19f;
+        speed = 20f;
         day = 0;
     }
 
@@ -59,7 +59,6 @@ public class InterfaceManager : MonoBehaviour
         thirstBar.GetComponent<Health>().setCurrentValue(thirst);
         energyBar.GetComponent<Health>().setCurrentValue(energy);
         happyBar.GetComponent<Health>().setCurrentValue(happiness);
-
         
     }
 
