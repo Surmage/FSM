@@ -9,12 +9,14 @@ public class InterfaceManager : MonoBehaviour
     public TextMeshPro cashText;
     public TextMeshPro timeText;
     public TextMeshPro statesText;
+    public TextMeshPro messagesText;
     GameObject actor;
     GameObject messageDispatcher;
     GameObject hungerBar;
     GameObject thirstBar;
     GameObject energyBar;
     GameObject happyBar;
+    AgentBehavior agentBehavior;
     float time;
     public float day;
     public float speed;
@@ -28,54 +30,66 @@ public class InterfaceManager : MonoBehaviour
         Telegram t = messageDispatcher.GetComponent<Telegram>();
         states = t.states;
         friends = t.friends;
+        messagesText.text = "";
         hungerBar = GameObject.Find("Hunger");
         thirstBar = GameObject.Find("Thirst");
         energyBar = GameObject.Find("Energy");
         happyBar = GameObject.Find("Happy");
         actor = GameObject.Find("Character");
-        //state = Instantiate(states[3]);   
-        hungerBar.GetComponent<Health>().setValue(8000);
-        thirstBar.GetComponent<Health>().setValue(8000);
-        energyBar.GetComponent<Health>().setValue(8000);
-        happyBar.GetComponent<Health>().setValue(8000);
+        agentBehavior = actor.GetComponent<AgentBehavior>();
+        hungerBar.GetComponent<SliderBar>().setValue(8000);
+        thirstBar.GetComponent<SliderBar>().setValue(8000);
+        energyBar.GetComponent<SliderBar>().setValue(8000);
+        happyBar.GetComponent<SliderBar>().setValue(8000);
         time = 0;
-        speed = 20f;
         day = 0;
     }
 
-    // Update is called once per frame
     void Update()
     {
-        float hunger = actor.GetComponent<Actor>().fullness;
-        float thirst = actor.GetComponent<Actor>().thirst;   
-        float energy = actor.GetComponent<Actor>().energy;
-        float happiness = actor.GetComponent<Actor>().happiness;
-        cashText.text = "Cash: " + actor.GetComponent<Actor>().money.ToString("#");
-        stateText.text = actor.GetComponent<Actor>().type;
-        statesText.text = " Friend 1: " + friends[0].GetComponent<Actor>().type + "\nFriend 2: " + friends[1].GetComponent<Actor>().type + "\nFriend 3:"+ friends[2].GetComponent<Actor>().type;
+        float hunger = agentBehavior.fullness;
+        float thirst = agentBehavior.thirst;   
+        float energy = agentBehavior.energy;
+        float happiness = agentBehavior.happiness;
+        cashText.text = "Cash: " + agentBehavior.money.ToString("#");
+        stateText.text = agentBehavior.type;
+        statesText.text = " Friend 1: " + friends[0].GetComponent<AgentBehavior>().type + "\nFriend 2: " + friends[1].GetComponent<AgentBehavior>().type + "\nFriend 3: "+ friends[2].GetComponent<AgentBehavior>().type;
+        cashText.text = "Cash: " + actor.GetComponent<AgentBehavior>().money.ToString("#");
         time += Time.deltaTime * 1440f * speed;
         clock(time);
-        hungerBar.GetComponent<Health>().setCurrentValue(hunger);
-        thirstBar.GetComponent<Health>().setCurrentValue(thirst);
-        energyBar.GetComponent<Health>().setCurrentValue(energy);
-        happyBar.GetComponent<Health>().setCurrentValue(happiness);
+        hungerBar.GetComponent<SliderBar>().setCurrentValue(hunger);
+        thirstBar.GetComponent<SliderBar>().setCurrentValue(thirst);
+        energyBar.GetComponent<SliderBar>().setCurrentValue(energy);
+        happyBar.GetComponent<SliderBar>().setCurrentValue(happiness);
         
     }
 
     public void clock(float time)
     {
-        //time = time * 1440f;
+        //24 hours in a day, 60 minutes per, 60 seconds per, 
+        //86 400 seconds in a day
         float day = time / 86400f;
         //3600 seconds is an hour
         float hours = time / 3600; //works
-        //24 hours in a day, 60 minutes per, 60 seconds per, 
-        //86 400 seconds in a day
-        //1440 
+       
         int roundedDay = (int)day;
         if (day >= 1)
         {
             hours = hours - 24 * roundedDay;
         }
         timeText.text = "Day: " + (roundedDay+1).ToString() + " Hour: " + hours.ToString("#");
+    }
+    public void updateMessageText(string msg)
+    {
+        int numLines = messagesText.text.Split('\n').Length;
+        //Remove upper messages
+        if(numLines > 6)
+        {
+            string[] items = messagesText.text.Split('\n');
+            messagesText.text = items[1] + "\n" + items[2] + "\n" + items[3] + "\n" + items[4] + "\n" + items[5] + "\n";
+        }
+        //Add messages to message box
+        messagesText.text += msg;
+        messagesText.text += "\n";
     }
 }

@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Telegram : MonoBehaviour
 {
-    string msg = "";
     GameObject interfaceM;
+    InterfaceManager im;
     [SerializeField] public List<GameObject> states = new List<GameObject>();
     [SerializeField] public List<GameObject> friends = new List<GameObject>();
 
@@ -13,51 +13,57 @@ public class Telegram : MonoBehaviour
     void Start()
     {
         interfaceM = GameObject.Find("InterfaceManager");
-        InterfaceManager im = interfaceM.GetComponent<InterfaceManager>();
+        im = interfaceM.GetComponent<InterfaceManager>();
         speed = im.speed;
-        //Debug.Log(friends[1].GetComponent<Actor>().name);
-
     }
     public string dispatchMessage(float delay, string senderName, string receiverName, string incMsg)
     {
-        GameObject sender = GameObject.Find(senderName);
         GameObject receiver = GameObject.Find(receiverName);
         
-        var sendAct = sender.GetComponent<Actor>();
-        var recAct = receiver.GetComponent<Actor>();
+        var recAct = receiver.GetComponent<AgentBehavior>();
+        string msg = "";
+        im.updateMessageText(senderName + " is asking  " + receiverName + " to hangout.");
         if (recAct.money >= 2000 && recAct.canISocial() && recAct.busy == false && recAct.status != "Dead")
         {        
             msg = "Yes";
         }
+        else if(recAct.money <= 2000)
+        {
+            msg = "I'm too poor";
+        }
         else
         {
-            msg = "Can't because I am " + recAct.getStatus();
+            msg = "Can't because I am " + recAct.type;
             
         }
+        im.updateMessageText(receiverName + ": " + msg);
         return msg;
     }
-    public State changeState(string cause, State s, Actor caller)
-    {
-        
+    public State changeState(string message, State s, AgentBehavior caller)
+    {      
+        //If a socializing date has been planned
         if (s.Exit(caller.name) != "")
         {
-            //Debug.Log(s.next);
-            string friend = s.next;
+            string friend = s.dateWith;
 
+            //Find the friend
             for (int i = 0; i < 4; i++)
             {
                 if (friend == friends[i].name)
                 {
-                    friends[i].GetComponent<Actor>().status = "Bored";
-                    friends[i].GetComponent<Actor>().enterSocial();
+                    //Friend enter social
+                    friends[i].GetComponent<AgentBehavior>().status = "Bored";
+                    friends[i].GetComponent<AgentBehavior>().enterSocial();
                 }
             }
+            //Caller enter social
             caller.status = "Bored";
             s = states[4].GetComponent<Social>();
             return s;
 
         }
-        if (cause == "Bored" && caller.GetComponent<Actor>().canSocial == true)
+        //Enter social state
+        if (message == "Bored" && caller.GetComponent<AgentBehavior>().canSocial == true)
         {
             if (caller.money >= 1000)
             {
@@ -69,72 +75,78 @@ public class Telegram : MonoBehaviour
                         {
                             if (dispatchMessage(0, caller.name, friends[i].name, "") == "Yes")
                             {
-                                //Debug.Log("WOwie");
-                                friends[i].GetComponent<Actor>().s.setNextState(friends[i].name);
-                                s = states[4].GetComponent<Social>();
-                                return s;
+                                friends[i].GetComponent<AgentBehavior>().s.setDate(caller.name);
                             }
                         }
                     }
-                    //This needs work, fix it
+                    //Make unable to socialize for 20 seconds (affected by speed variable)
                     StartCoroutine(caller.setCanSocial(10));
-                    cause = caller.isAnythingLow();
+                    //Find new state to enter
+                    message = caller.isAnythingLow();
                 }
 
             }
-            else //this too
+            else
             {
+                //Make unable to socialize for 20 seconds (affected by speed variable)
                 StartCoroutine(caller.setCanSocial(10));
-                cause = caller.isAnythingLow();              
+                //Find new state to enter
+                message = caller.isAnythingLow();              
             }
         }
-        if (cause == "Hungry")
+        //Enter eat state
+        if (message == "Hungry")
         {
             s = states[0].GetComponent<Eat>();
             return s;
 
         }
-        if (cause == "Sleepy")
+        //Enter sleep state
+        if (message == "Sleepy")
         {
             s = states[1].GetComponent<Sleep>();
             return s;
 
         }
-        if (cause == "Thirsty")
+        //Enter drink state
+        if (message == "Thirsty")
         {
             s = states[2].GetComponent<Drink>();
             return s;
 
         }
-        if (cause == "Motivated")
+        //Enter gather state
+        if (message == "Motivated")
         {
             s = states[3].GetComponent<Gather>();
             return s;
 
         }
-        
-        if (cause == "Fine")
+        //Enter idle state
+        if (message == "Fine")
         {
             s = states[5].GetComponent<Idle>();
             return s;
 
         }
-        if (cause == "Poor")
+        //Enter mining state
+        if (message == "Poor")
         {
             s = states[6].GetComponent<Mining>();
             return s;
 
         }
-        if (cause == "Dead")
+        //Enter dead state
+        if (message == "Dead")
         {
             s = states[7].GetComponent<Dead>();
             return s;
         }
-        Debug.Log("Oh no");
         return s;
     }
-    public State changeState(int i, State s, Actor caller)
+    public State changeState(int i, State s, AgentBehavior caller)
     {
+        //Change state based of index i
         if(s != null)
         {
             s.Exit(caller.name);
@@ -166,24 +178,22 @@ public class Telegram : MonoBehaviour
 
         return s;
     }
-    public bool fix(Actor caller, List<(float, string)> arr, List<(float, string)> arrCopy)
+    public bool askForMoney(AgentBehavior caller)
     {
         Debug.Log(caller.name + " asked for help");
         for (int i = 0; i < 4; i++)
         {
             if (caller.name != friends[i].name)
             {
-                Actor friend = friends[i].GetComponent<Actor>();               
-                if (friend.money >= 1500 && friend.status != "Sleep" && friend.status != "Dead") //Solution for hungry/thirsty/bored
-                {                                       
+                AgentBehavior friend = friends[i].GetComponent<AgentBehavior>();               
+                if (friend.money >= 1500 && friend.status != "Sleep" && friend.status != "Dead") 
+                {   
+                    //"busy" being true prevents the state from being changed
                     friend.busy = true;
                     caller.busy = true;
-                    //Debug.Log(caller.money);
                     friend.changeMoney(-500);
                     caller.changeMoney(500);
                     caller.changeHappiness(2000);
-                    //Debug.Log(caller.money);
-                    //Debug.Log("Helped");
                     friend.busy = false;
                     caller.busy = false;
                     return true;
@@ -191,26 +201,6 @@ public class Telegram : MonoBehaviour
             }
         }
         return false;
-        //arr contains any item that can be fixed, arrCopy contains all items
-
-        //Debug.Log(name + " " + arr[0].Item2 + " " + arr[1].Item2);
-        //string string1 = arr[0].Item2;
-        //string string2 = arr[1].Item2;
-
-        //Stats increase by a lot instantly?
-        //if (!busy)
-        //{
-        //    StartCoroutine(setBusy(20));
-        //    StartCoroutine(enterStateDelayed(0, "Thirsty"));
-        //    StartCoroutine(enterStateDelayed(10, "Hungry"));
-        //    StartCoroutine(enterStateDelayed(20, "Sleepy"));
-        //}
-        //energy = 8000;
-        //fullness = 8000;
-        //happiness = 8000;
-        //thirst = 8000;
-
-        //return busy;
     }
     public float getSpeed()
     {

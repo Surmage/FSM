@@ -7,24 +7,22 @@ public class Drink : State
 
     public override void Execute(string name)
     {
-
-        actor = GameObject.Find(name);
-        var act = actor.GetComponent<Actor>();
-        act.changeEnergy(-0.25f * speed);
-        act.changeThirst(3 * speed);
+        //Change stat variables
+        agent = GameObject.Find(name);
+        var agentBehavior = agent.GetComponent<AgentBehavior>();
+        agentBehavior.changeEnergy(-0.25f * speed);
+        agentBehavior.changeThirst(3 * speed);
 
     }
     public override void Enter(string name)
     {
-        setStartValues("Drink");
-
-
-
+        Debug.Log(name + " entering Drink state");
+        setStartValues("drinking");
     }
 
     public override string Exit(string name)
     {
-        return next;
-
+        Debug.Log(name + " exiting Drink state");
+        return dateWith;
     }
 }

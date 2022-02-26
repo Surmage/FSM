@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Actor : MonoBehaviour
+public class AgentBehavior : MonoBehaviour
 {
     public float fullness;
     public float thirst;
@@ -41,17 +41,15 @@ public class Actor : MonoBehaviour
         s = null;
         s = telegram.changeState(i, s, this);
         s.Enter(name);
-        //type = s.type;
+        type = s.type;
 
     }
 
     // Update is called once per frame
     void Update()
-    {
-        
+    {       
         s.Execute(name);
         type = s.type;
-        //Debug.Log(name + " type: " + type + " status: " + status + " Can social: " + canSocial);
 
         if (fullness < 0)
         {
@@ -103,13 +101,14 @@ public class Actor : MonoBehaviour
             fullness += change;
             if (!busy)
             {
+                //If too low
                 if (fullness <= 1000 && change < 0)
                 {
                     checkShouldEnter();
 
-                    return;
                 }
-                if (amIFine() && change > 0)
+                //If too high
+                else if (amIFine() && change > 0)
                 {
                     checkShouldEnter();
 
@@ -124,14 +123,14 @@ public class Actor : MonoBehaviour
             thirst += change;
             if (!busy)
             {
+                //If too low
                 if (thirst <= 1000 && change < 0)
                 {
                     checkShouldEnter();
 
-                    //Change                    
-                    return;
                 }
-                if (amIFine() && change > 0)
+                //If too high
+                else if (amIFine() && change > 0)
                 {
                     checkShouldEnter();
 
@@ -145,18 +144,24 @@ public class Actor : MonoBehaviour
         {
             energy += change;          
             if (!busy)
-            {              
+            {
+                //If too low
                 if (energy <= 1000 && change < 0)
                 {
-                    checkShouldEnter();
+                    if(type == "socializing" && amIFine())
+                    {
+                        checkShouldEnter();
+                    }
+                    else if(type != "socializing")
+                    {
+                        checkShouldEnter();
+                    }
 
-                    return;
                 }
-                if (amIFine() && change > 0)
+                //If too high
+                else if (amIFine() && change > 0)
                 {
                     checkShouldEnter();
-
-
                 }
             }
         }
@@ -166,19 +171,16 @@ public class Actor : MonoBehaviour
         money += change;
         if (!busy)
         {
-            if(status != "Social")
+            if (status != "Social")
             {
                 //if too low
                 if (money < 1700 && change < 0)
                 {
                     checkShouldEnter();
-
-                    return;
-                }
-                //Change                    
+                }                   
             }
             //if too high
-            if (amIFine() && change > 0)
+            else if (amIFine() && change > 0)
             {
                 checkShouldEnter();
 
@@ -197,15 +199,12 @@ public class Actor : MonoBehaviour
             {
 
                 checkShouldEnter();
-
-
-                return;
             }
             //Change         
 
 
             //if too high
-            if (amIFine() && change > 0)
+            else if (amIFine() && change > 0)
             {
                 checkShouldEnter();
             }
@@ -214,13 +213,14 @@ public class Actor : MonoBehaviour
     }
     private void checkShouldEnter()
     {
+        //Check if already in state
         status = isAnythingLow();
         if (!compareStatusType())
         {
             enterState();
         }
     }
-    public void enterState() //not called when stuck
+    public void enterState()
     {       
         s = telegram.GetComponent<Telegram>().changeState(status, s, this);
         s.Enter(name);
@@ -235,97 +235,90 @@ public class Actor : MonoBehaviour
 
     private bool amIFine()
     {
-        //string type = messager.GetComponent<StateManager>().type;
-        if(s.type == "Drink")
+        //Check if state main stat is high enough to exit
+        if(s.type == "drinking")
         {
             if(thirst >= 7000)
             {
                 return true;
             }
         }
-        if(s.type == "Eat")
+        if(s.type == "eating")
         {
             if (fullness >= 7000)
             {
                 return true;
             }
         }
-        if(s.type == "Sleep")
+        if(s.type == "sleeping")
         {
             if(energy >= 7500)
             {
                 return true;
             }
         }
-        if (s.type == "Gather")
+        if (s.type == "gathering")
         {
             if (money >= 5000)
             {           
                 return true;
             }
         }
-        if (s.type == "Mine")
+        if (s.type == "mining")
         {
             if (money >= 10000)
             {
                 return true;
             }
         }
-        if (s.type == "Social")
+        if (s.type == "socializing")
         {
             if (happiness >= 7000)
             {              
                 return true;
             }
         }
-        //if (s.type == "Idle")
-        //{
-        //    if (money >= 2500 && happiness >= 7000)
-        //    {
-        //        return true;
-        //    }
-        //}
         return false;
     }
     public bool canISocial()
     {
+        //Check if state main stat is high enough to socialize
         if(money <= 1700)
         {
             return false;
         }
         else
         {
-            //string type = messager.GetComponent<StateManager>().type;
-            if (s.type == "Drink")
+            if (s.type == "drinking")
             {
                 return true;
             }
-            if (s.type == "Eat")
+            if (s.type == "eating")
             {
                 if (fullness >= 1000)
                 {
                     return true;
                 }
             }
-            if (s.type == "Sleep")
+            if (s.type == "sleeping")
             {
                 if (energy >= 6000)
                 {
                     return true;
                 }
             }
-            if (s.type == "Gather")
+            if (s.type == "gathering")
             {
                 return true;
             }
-            if (s.type == "Mine")
+            if (s.type == "mining")
             {
                 if (money >= 5000)
                 {
                     return true;
                 }
             }
-            if (s.type == "Idle")
+            if (s.type == "idling around")
             {
                 return true;
             }
@@ -336,18 +329,16 @@ public class Actor : MonoBehaviour
     {
         List<(float, string)> arrs = new List<(float, string)>()
         {(thirst, "Thirsty"), (energy, "Sleepy"), (fullness, "Hungry"), (money, "Poor"), (happiness, "Bored") };
-        List<(float, string)> arrsCopy = arrs;
+
+        //Remove possibility of entering states if should be impossible
 
         if (!canSocial || money < 1000)
         {
             arrs.RemoveAt(4);
-            //Debug.Log(name + " cannot be social");
         }
         if (needRepair && money < 1700)
         {
-            //Debug.Log("Removed: " + arrs[3].Item2);
             arrs.RemoveAt(3);
-            //Debug.Log(name + " cannot work");
         }
         else if(energy <= 100 || happiness <= 100)
         {
@@ -357,7 +348,7 @@ public class Actor : MonoBehaviour
         {
             if(timesAskedForHelp <= 4)
             {
-                if (!telegram.fix(this, arrs, arrsCopy))
+                if (!telegram.askForMoney(this))
                 {
                     arrs.RemoveAt(2);
                 }
@@ -371,26 +362,18 @@ public class Actor : MonoBehaviour
             {
                 arrs.RemoveAt(2);
             }
-
-            //Debug.Log(name + " cannot afford food");
         }
         arrs.Sort();
-        arrsCopy.Sort();
-        //foreach((float, string) type in arrs){
-        //    Debug.Log(name + " " + type);
-        //}
+
+        //Return stat that is the lowest
         if (arrs[0].Item1 <= 1000)
         {
-            if(arrs[0].Item2 == "Poor")
-            {
-                //Debug.Log(money + " needRepair is: " + needRepair);
-            }
-            return arrs[0].Item2;
-            
+            return arrs[0].Item2;           
         }
         
         else
         {           
+            //Enter Idle or Gathering 
             float mood = Random.Range(0, 3);
             if (mood != 2)
             {
@@ -416,23 +399,14 @@ public class Actor : MonoBehaviour
                 }
             }
         }
-        //Debug.Log("Oh no");
-        //listed in order of importance
     }
     
-    public string getStatus()
-    {
-        return status;
-    }
-    public void setStatus(string status)
-    {
-        this.status = status;
-    }
     private bool compareStatusType()
     {
+        //Checks if type fits with status
         if (status == "Hungry")
         {
-            if(type == "Eat")
+            if(type == "eating")
             {
                 return true;
             }
@@ -443,7 +417,7 @@ public class Actor : MonoBehaviour
         }
         if (status == "Sleepy")
         {
-            if (type == "Sleep")
+            if (type == "sleeping")
             {
                 return true;
             }
@@ -454,7 +428,7 @@ public class Actor : MonoBehaviour
         }
         if (status == "Thirsty")
         {
-            if (type == "Drink")
+            if (type == "drinking")
             {
                 return true;
             }
@@ -465,7 +439,7 @@ public class Actor : MonoBehaviour
         }
         if (status == "Motivated")
         {
-            if (type == "Gather")
+            if (type == "gathering")
             {
                 return true;
             }
@@ -476,7 +450,7 @@ public class Actor : MonoBehaviour
         }
         if (status == "Bored")
         {
-            if (type == "Social")
+            if (type == "socializing")
             {
                 return true;
             }
@@ -487,7 +461,7 @@ public class Actor : MonoBehaviour
         }
         if (status == "Fine")
         {
-            if (type == "Idle")
+            if (type == "idling around")
             {
                 return true;
             }
@@ -498,7 +472,7 @@ public class Actor : MonoBehaviour
         }
         if (status == "Poor")
         {
-            if (type == "Mine")
+            if (type == "mining")
             {
                 return true;
             }
@@ -514,39 +488,17 @@ public class Actor : MonoBehaviour
         return false;     
     }
 
-    //private IEnumerator enterStateDelayed(float waitTime, string newStatus)
-    //{
-    //    WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed());
-    //    yield return wait;
-    //    status = newStatus;
-    //    enterState();
-    //}
     public IEnumerator setCanSocial(float waitTime)
     {
+        //Set canSocial variable with a timer
         if (canSocial)
         {
             canSocial = false;
-            //Debug.Log(name + " " + canSocial);
 
             WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed());
             yield return wait;
             canSocial = true;
-            //Debug.Log(name + " " + canSocial);
         }
     }
-
-    //public IEnumerator setBusy(float waitTime)
-    //{
-    //    if (!busy)
-    //    {
-    //        busy = true;
-    //        //Debug.Log(name + " " + canSocial);
-
-    //        WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed());
-    //        yield return wait;
-    //        busy = false;
-    //        //Debug.Log(name + " " + canSocial);
-    //    }
-    //}
 
 }

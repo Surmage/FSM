@@ -10,11 +10,13 @@ public class Dead : State
     }
     public override void Enter(string name)
     {
-        setStartValues("Dead");
+        Debug.Log(name + " entering Dead state");
+        setStartValues("dead");
     }
 
     public override string Exit(string name)
     {
+        Debug.Log(name + " exiting Dead state");
         return "";
     }
 }

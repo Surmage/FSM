@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Health : MonoBehaviour
+public class SliderBar : MonoBehaviour
 {
     public Slider slider;
     // Start is called before the first frame update

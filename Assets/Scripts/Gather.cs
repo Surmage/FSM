@@ -6,23 +6,25 @@ public class Gather : State
 {
     public override void Execute(string name)
     {
-
-        actor = GameObject.Find(name);
-        var act = actor.GetComponent<Actor>();
-        act.changeEnergy(-0.25f * speed);
-        act.changeHunger(-0.2f * speed);
-        act.changeThirst(-0.5f * speed);
-        act.changeMoney(0.1f * speed);
-        act.changeHappiness(-0.1f * speed);
+        //Change stat variables
+        agent = GameObject.Find(name);
+        var agentBehavior = agent.GetComponent<AgentBehavior>();
+        agentBehavior.changeEnergy(-0.25f * speed);
+        agentBehavior.changeHunger(-0.2f * speed);
+        agentBehavior.changeThirst(-0.5f * speed);
+        agentBehavior.changeMoney(0.1f * speed);
+        agentBehavior.changeHappiness(-0.1f * speed);
     }
     public override void Enter(string name)
     {
-        setStartValues("Gather");
+        Debug.Log(name + " entering Gather state");
+        setStartValues("gathering");
     }
 
     public override string Exit(string name)
     {
-        return next;
+        Debug.Log(name + " exiting Gather state");
+        return dateWith;
 
     }
 }

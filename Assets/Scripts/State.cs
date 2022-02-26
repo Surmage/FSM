@@ -5,36 +5,27 @@ using UnityEngine;
 public abstract class State : MonoBehaviour
 {
     public string type;
-    public string problem;
     public float speed;
-    public GameObject actor;
+    public GameObject agent;
     public GameObject manager;
-    public InterfaceManager im;
-    public Actor ac;
-    public string next;
+    public string dateWith;
 
-    // Start is called before the first frame update
     public abstract void Enter(string name);
 
     public abstract void Execute(string name);
 
     public abstract string Exit(string name);
 
-    public void changeText(string output)
-    {
-        //Debug.Log(output);
-    }
     public void setStartValues(string type)
     {
-
         manager = GameObject.Find("InterfaceManager");
-        im = manager.GetComponent<InterfaceManager>();        
+        InterfaceManager im = manager.GetComponent<InterfaceManager>();        
         speed = im.speed;
         this.type = type;
-        next = "";
+        dateWith = "";
     }
-    public void setNextState(string next)
+    public void setDate(string next)
     {
-        this.next = next;
+        this.dateWith = next;
     }
 }

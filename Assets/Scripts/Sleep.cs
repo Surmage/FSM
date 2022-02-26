@@ -4,25 +4,24 @@ using UnityEngine;
 
 public class Sleep : State
 {
-    // Start is called before the first frame update
     public override void Execute(string name)
     {
-
-        actor = GameObject.Find(name);
-        //60 per second,
-        var act = actor.GetComponent<Actor>();
-        act.changeHunger(-0.01f * speed);
-        act.changeThirst(-0.02f * speed);
-        act.changeEnergy(0.425f * speed); //20 seconds, 86400, 600 per second
-        //decrease hunger and thirst but only if they are above a specific amount, like 500                                                        
+        //Change stat variables
+        agent = GameObject.Find(name);
+        var agentBehavior = agent.GetComponent<AgentBehavior>();
+        agentBehavior.changeHunger(-0.01f * speed);
+        agentBehavior.changeThirst(-0.02f * speed);
+        agentBehavior.changeEnergy(0.425f * speed); 
     }
     public override void Enter(string name)
     {
-        setStartValues("Sleep");
+        Debug.Log(name + " entering Sleep state");
+        setStartValues("sleeping");
     }
 
     public override string Exit(string name)
     {
-        return next;
+        Debug.Log(name + " exiting Sleep state");
+        return dateWith;
     }
 }
