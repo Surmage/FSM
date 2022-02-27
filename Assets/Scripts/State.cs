@@ -8,6 +8,7 @@ public abstract class State : MonoBehaviour
     public float speed;
     public GameObject agent;
     public GameObject manager;
+    public InterfaceManager im;
     public string dateWith;
 
     public abstract void Enter(string name);
@@ -19,7 +20,7 @@ public abstract class State : MonoBehaviour
     public void setStartValues(string type)
     {
         manager = GameObject.Find("InterfaceManager");
-        InterfaceManager im = manager.GetComponent<InterfaceManager>();        
+        im = manager.GetComponent<InterfaceManager>();        
         speed = im.speed;
         this.type = type;
         dateWith = "";

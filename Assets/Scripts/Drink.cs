@@ -8,6 +8,7 @@ public class Drink : State
     public override void Execute(string name)
     {
         //Change stat variables
+        speed = im.speed;
         agent = GameObject.Find(name);
         var agentBehavior = agent.GetComponent<AgentBehavior>();
         agentBehavior.changeEnergy(-0.25f * speed);

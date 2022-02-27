@@ -7,6 +7,7 @@ public class Sleep : State
     public override void Execute(string name)
     {
         //Change stat variables
+        speed = im.speed;
         agent = GameObject.Find(name);
         var agentBehavior = agent.GetComponent<AgentBehavior>();
         agentBehavior.changeHunger(-0.01f * speed);
