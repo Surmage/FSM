@@ -18,7 +18,7 @@ public class InterfaceManager : MonoBehaviour
     GameObject happyBar;
     AgentBehavior agentBehavior;
     float time;
-    public float day;
+
     public float speed;
     List<GameObject> states = new List<GameObject>();
     List<GameObject> friends = new List<GameObject>();
@@ -42,7 +42,6 @@ public class InterfaceManager : MonoBehaviour
         energyBar.GetComponent<SliderBar>().setValue(8000);
         happyBar.GetComponent<SliderBar>().setValue(8000);
         time = 0;
-        day = 0;
     }
 
     void Update()
@@ -61,23 +60,31 @@ public class InterfaceManager : MonoBehaviour
         thirstBar.GetComponent<SliderBar>().setCurrentValue(thirst);
         energyBar.GetComponent<SliderBar>().setCurrentValue(energy);
         happyBar.GetComponent<SliderBar>().setCurrentValue(happiness);
-        
     }
-
-    public void clock(float time)
+    public int getDay()
     {
         //24 hours in a day, 60 minutes per, 60 seconds per, 
         //86 400 seconds in a day
-        float day = time / 86400f;
-        //3600 seconds is an hour
-        float hours = time / 3600; //works
-       
+        float day = time / 86400f;      
         int roundedDay = (int)day;
+        return roundedDay;
+    }
+    public float getHour()
+    {
+        //60 seconds per minute, 60 minutes in an hour, makes 3600 seconds is an hour
+        float hour = time / 3600; 
+        int day = getDay();
         if (day >= 1)
         {
-            hours = hours - 24 * roundedDay;
+            hour = hour - 24 * getDay();
         }
-        timeText.text = "Day: " + (roundedDay+1).ToString() + " Hour: " + hours.ToString("#");
+        return hour;
+    }
+    public void clock(float time)
+    {
+        int day = getDay();
+        float hour = getHour();
+        timeText.text = "Day: " + (day+1).ToString() + " Hour: " + hour.ToString("#");
     }
     public void updateMessageText(string msg)
     {

@@ -6,6 +6,7 @@ public abstract class State : MonoBehaviour
 {
     public string type;
     public float speed;
+    public float energyChangeVal;
     public GameObject agent;
     public GameObject manager;
     public InterfaceManager im;
@@ -24,6 +25,7 @@ public abstract class State : MonoBehaviour
         speed = im.speed;
         this.type = type;
         dateWith = "";
+        energyChangeVal = -0.22f;
     }
     public void setDate(string next)
     {

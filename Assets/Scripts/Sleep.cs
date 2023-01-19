@@ -10,9 +10,11 @@ public class Sleep : State
         speed = im.speed;
         agent = GameObject.Find(name);
         var agentBehavior = agent.GetComponent<AgentBehavior>();
+        agentBehavior.busy = true;
         agentBehavior.changeHunger(-0.01f * speed);
         agentBehavior.changeThirst(-0.02f * speed);
-        agentBehavior.changeEnergy(0.425f * speed); 
+        agentBehavior.busy = false;
+        agentBehavior.changeEnergy(-energyChangeVal * 2 * speed); 
     }
     public override void Enter(string name)
     {

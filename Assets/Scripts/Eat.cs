@@ -11,10 +11,12 @@ public class Eat : State
         speed = im.speed;
         agent = GameObject.Find(name);
         var agentBehavior = agent.GetComponent<AgentBehavior>();
-        agentBehavior.changeEnergy(-0.25f * speed);
+        agentBehavior.changeEnergy(energyChangeVal * speed);
         agentBehavior.changeHunger(0.5f * foodValue * speed);
+        agentBehavior.busy = true;
         agentBehavior.changeThirst(1 * speed);
-        agentBehavior.changeHappiness(0.05f * speed);
+        agentBehavior.changeHappiness(0.1f * speed);
+        agentBehavior.busy = false;
     }
     public override void Enter(string name)
     {

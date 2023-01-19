@@ -62,24 +62,24 @@ public class Telegram : MonoBehaviour
             return s;
 
         }
-        //Enter social state
-        if (message == "Bored" && caller.GetComponent<AgentBehavior>().canSocial == true)
+        //Plan to socialize
+        if (message == "Bored" && caller.GetComponent<AgentBehavior>().canSocial == true) //Maybe change implementation to one hour ahead? Meaning, they socialize one hour after being asked rather than at the end of current state
         {
-            if (caller.money >= 1000)
+            if (caller.money >= 1000) //If not broke
             {
-                if (s.type != "Social")
+                if (s.type != "Social") //If not already socializing
                 {
-                    for (int i = 0; i < 4; i++)
+                    for (int i = 0; i < 4; i++) //Check through all agents
                     {
-                        if (caller.name != friends[i].name)
+                        if (caller.name != friends[i].name) //Check that caller isn't asking themselves to hang out
                         {
-                            if (dispatchMessage(0, caller.name, friends[i].name, "") == "Yes")
+                            if (dispatchMessage(0, caller.name, friends[i].name, "") == "Yes") //If agent says yes
                             {
-                                friends[i].GetComponent<AgentBehavior>().s.setDate(caller.name);
+                                friends[i].GetComponent<AgentBehavior>().s.setDate(caller.name); //Plan date
                             }
                         }
                     }
-                    //Make unable to socialize for 20 seconds (affected by speed variable)
+                    //Make unable to socialize for 10 seconds (affected by speed variable)
                     StartCoroutine(caller.setCanSocial(10));
                     //Find new state to enter
                     message = caller.isAnythingLow();
@@ -88,7 +88,7 @@ public class Telegram : MonoBehaviour
             }
             else
             {
-                //Make unable to socialize for 20 seconds (affected by speed variable)
+                //Make unable to socialize for 10 seconds (affected by speed variable)
                 StartCoroutine(caller.setCanSocial(10));
                 //Find new state to enter
                 message = caller.isAnythingLow();              
@@ -183,7 +183,7 @@ public class Telegram : MonoBehaviour
         Debug.Log(caller.name + " asked for help");
         for (int i = 0; i < 4; i++)
         {
-            if (caller.name != friends[i].name)
+            if (caller.name != friends[i].name) //To avoid asking themselves for money
             {
                 AgentBehavior friend = friends[i].GetComponent<AgentBehavior>();               
                 if (friend.money >= 1500 && friend.status != "Sleep" && friend.status != "Dead") 

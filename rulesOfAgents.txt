@@ -1,0 +1,14 @@
+Normal sleep takes 8 hours
+Normal day awake time is 16 hours (Sleep * 2)
+
+Everyone wakes up at 8 (Ideally sleep from 0 to 8)
+Every state other than sleep decreases energy
+
+Sleep exceptions:
+If a character gets insufficient sleep, they will get exhausted and sleep until 8 the next day
+
+If happiness reaches 0, he will not work
+
+To work on: 
+Social state entering (Inside changeState method)
+Improve mining state, it's currently underused

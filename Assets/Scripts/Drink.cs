@@ -11,7 +11,7 @@ public class Drink : State
         speed = im.speed;
         agent = GameObject.Find(name);
         var agentBehavior = agent.GetComponent<AgentBehavior>();
-        agentBehavior.changeEnergy(-0.25f * speed);
+        agentBehavior.changeEnergy(energyChangeVal * speed);
         agentBehavior.changeThirst(3 * speed);
 
     }

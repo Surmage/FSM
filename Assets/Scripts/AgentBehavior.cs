@@ -18,7 +18,10 @@ public class AgentBehavior : MonoBehaviour
     private int timesAskedForHelp;
     GameObject messageDispatcher;
     Telegram telegram;
+    GameObject interfaceManager;
+    InterfaceManager im;
     GameObject state;
+    float hour;
     // Start is called before the first frame update
     void Start()
     {
@@ -28,7 +31,7 @@ public class AgentBehavior : MonoBehaviour
         status = "";
         needRepair = false;
         float startValue1= Random.Range(4000, 8000);
-        float startValue2 = 8000;
+        float startValue2 = 2000;
         float startValue3 = Random.Range(4000, 8000);
         fullness = startValue1;
         thirst = startValue1;
@@ -36,13 +39,14 @@ public class AgentBehavior : MonoBehaviour
         money = startValue3;
         happiness = startValue3;
         messageDispatcher = GameObject.Find("MessageDispatcher");
-        int i = Random.Range(0, 4);
         telegram = messageDispatcher.GetComponent<Telegram>();
+        interfaceManager = GameObject.Find("InterfaceManager");
+        im = interfaceManager.GetComponent<InterfaceManager>();
         s = null;
-        s = telegram.changeState(i, s, this);
+        s = telegram.changeState(1, s, this);
         s.Enter(name);
         type = s.type;
-
+        hour = im.getHour();
     }
 
     // Update is called once per frame
@@ -50,7 +54,17 @@ public class AgentBehavior : MonoBehaviour
     {       
         s.Execute(name);
         type = s.type;
-
+        hour = im.getHour();
+        if (fullness <= 0 || thirst <= 0)
+        {
+            if (status != "Dead")
+            {
+                Debug.Log("Died with this type: " + type + " and status: " + status);
+                status = "Dead";
+                s = telegram.changeState(status, s, this);
+                s.Enter(name);
+            }
+        }
         if (fullness < 0)
         {
             fullness = 0;
@@ -83,15 +97,13 @@ public class AgentBehavior : MonoBehaviour
         {
             happiness = 8000;
         }
-        if (fullness <= 0)
+        if(hour == 0)
         {
-            if(status != "Dead")
-            {
-                Debug.Log("Died with this type: " + type + " and status: " + status);
-                status = "Dead";
-                s = telegram.changeState(status, s, this);
-                s.Enter(name);
-            }          
+            canSocial = false;
+        }
+        if(hour == 8)
+        {
+            canSocial = true;
         }
     }
     public void changeHunger(float change)
@@ -142,24 +154,34 @@ public class AgentBehavior : MonoBehaviour
     {       
         if (energy >= 0 && energy <= 8000)
         {
-            energy += change;          
+            energy += change;                
             if (!busy)
             {
+                if (energy <= 0) //pass out
+                {
+                    im.updateMessageText(name + " passed out");
+                    busy = true;
+                    changeHunger(-1500);
+                    changeThirst(-1500);
+                    changeMoney(-500);
+                    busy = false;
+                    checkShouldEnter();
+                    return;
+                }
                 //If too low
                 if (energy <= 1000 && change < 0)
                 {
-                    if(type == "socializing" && amIFine())
+                    if(s.type == "socializing" && amIFine()) //stay up if socializing and not satisfied yet
                     {
                         checkShouldEnter();
                     }
-                    else if(type != "socializing")
+                    else if(s.type != "socializing") //sleep if not socializing and tired
                     {
                         checkShouldEnter();
                     }
-
                 }
                 //If too high
-                else if (amIFine() && change > 0)
+                else if (change > 0 && hour >= 8 && hour <= 9) //Wake up between 8 and 9 if sleeping
                 {
                     checkShouldEnter();
                 }
@@ -183,7 +205,6 @@ public class AgentBehavior : MonoBehaviour
             else if (amIFine() && change > 0)
             {
                 checkShouldEnter();
-
             }
 
         }
@@ -195,9 +216,8 @@ public class AgentBehavior : MonoBehaviour
         if (!busy)
         {
             //if too low
-            if (happiness <= 1000 && change < 0)
+            if (happiness <= 2000 && change < 0 && canSocial)
             {
-
                 checkShouldEnter();
             }
             //Change         
@@ -238,21 +258,21 @@ public class AgentBehavior : MonoBehaviour
         //Check if state main stat is high enough to exit
         if(s.type == "drinking")
         {
-            if(thirst >= 7000)
+            if(thirst >= 8000)
             {
                 return true;
             }
         }
         if(s.type == "eating")
         {
-            if (fullness >= 7000)
+            if (fullness >= 8000)
             {
                 return true;
             }
         }
         if(s.type == "sleeping")
         {
-            if(energy >= 7500)
+            if(energy >= 8000)
             {
                 return true;
             }
@@ -273,7 +293,7 @@ public class AgentBehavior : MonoBehaviour
         }
         if (s.type == "socializing")
         {
-            if (happiness >= 7000)
+            if (happiness >= 8000)
             {              
                 return true;
             }
@@ -282,7 +302,7 @@ public class AgentBehavior : MonoBehaviour
     }
     public bool canISocial()
     {
-        //Check if state main stat is high enough to socialize
+        //Check if state money stat is high enough to socialize
         if(money <= 1700)
         {
             return false;
@@ -302,10 +322,7 @@ public class AgentBehavior : MonoBehaviour
             }
             if (s.type == "sleeping")
             {
-                if (energy >= 6000)
-                {
-                    return true;
-                }
+                return false;
             }
             if (s.type == "gathering")
             {
@@ -322,6 +339,10 @@ public class AgentBehavior : MonoBehaviour
             {
                 return true;
             }
+            if(s.type == "socializing")
+            {
+                return true;
+            }
         }   
         return false;
     }
@@ -332,35 +353,35 @@ public class AgentBehavior : MonoBehaviour
 
         //Remove possibility of entering states if should be impossible
 
-        if (!canSocial || money < 1000)
+        if (!canSocial || money < 1000) //remove entering social as an option
         {
             arrs.RemoveAt(4);
         }
-        if (needRepair && money < 1700)
+        if (needRepair && money < 1700) //remove mining as an option
         {
             arrs.RemoveAt(3);
         }
-        else if(energy <= 100 || happiness <= 100)
+        else if(energy <= 1000 || happiness <= 1000) //remove mining as an option too
         {
             arrs.RemoveAt(3);
         }
-        if (arrs[2].Item1 <= 1000 && money < 200)
+        if (arrs[2].Item1 <= 1000 && money < 200) //check if hungry and poor
         {
-            if(timesAskedForHelp <= 4)
+            if(timesAskedForHelp <= 4) //can only receive money for food 4 times before friends stop
             {
-                if (!telegram.askForMoney(this))
+                if (!telegram.askForMoney(this)) //remove entering eating as an option
                 {
                     arrs.RemoveAt(2);
                 }
                 else
                 {
                     timesAskedForHelp++;
-                    return "Hungry";
+                    return "Hungry"; //eating will be the next state
                 }
             }
             else
             {
-                arrs.RemoveAt(2);
+                arrs.RemoveAt(2); //didn't receive money, can't afford food
             }
         }
         arrs.Sort();
@@ -372,38 +393,53 @@ public class AgentBehavior : MonoBehaviour
         }
         
         else
-        {           
+        {
             //Enter Idle or Gathering 
-            float mood = Random.Range(0, 3);
-            if (mood != 2)
+            if (happiness >= 0)
             {
-                if(status != "Motivated")
+                float mood = Random.Range(0, 3);
+                if (mood == 2)
                 {
-                    return "Fine";
+                    if (status != "Fine")
+                    {
+                        return "Motivated";
+                    }
+                    else
+                    {
+                        return "Fine";
+                    }
                 }
                 else
                 {
-                    return "Motivated";
+                    if (status != "Motivated")
+                    {
+                        return "Fine";
+                    }
+                    else
+                    {
+                        return "Motivated";
+                    }
                 }
-                
+                                             
             }
             else
             {
-                if(status != "Fine")
-                {
-                    return "Motivated";
-                }
-                else
+                if (status != "Motivated")
                 {
                     return "Fine";
                 }
+                else
+                {
+                    return "Motivated";
+                }
             }
         }
+        return status;
     }
     
     private bool compareStatusType()
     {
-        //Checks if type fits with status
+        //Checks if type fits with status, for example: is the agent eating because they are hungry? Is the agent sleeping because they are sleepy?
         if (status == "Hungry")
         {
             if(type == "eating")
@@ -490,12 +526,12 @@ public class AgentBehavior : MonoBehaviour
 
     public IEnumerator setCanSocial(float waitTime)
     {
-        //Set canSocial variable with a timer
+        //Set canSocial variable with a timer 
         if (canSocial)
         {
             canSocial = false;
 
-            WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed());
+            WaitForSeconds wait = new WaitForSeconds(waitTime / telegram.getSpeed()); //Cooldown on canSocial
             yield return wait;
             canSocial = true;
         }

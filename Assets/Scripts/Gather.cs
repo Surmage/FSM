@@ -10,11 +10,11 @@ public class Gather : State
         speed = im.speed;
         agent = GameObject.Find(name);
         var agentBehavior = agent.GetComponent<AgentBehavior>();
-        agentBehavior.changeEnergy(-0.25f * speed);
+        agentBehavior.changeEnergy(energyChangeVal * speed);
         agentBehavior.changeHunger(-0.2f * speed);
         agentBehavior.changeThirst(-0.5f * speed);
         agentBehavior.changeMoney(0.1f * speed);
-        agentBehavior.changeHappiness(-0.1f * speed);
+        agentBehavior.changeHappiness(-0.05f * speed);
     }
     public override void Enter(string name)
     {
